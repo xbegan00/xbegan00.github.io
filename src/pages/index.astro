@@ -1,5 +1,6 @@
 ---
 import '../styles/styletitle.css'
+
 ---
 
 
@@ -11,24 +12,14 @@ import '../styles/styletitle.css'
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Doppleruv efekt</title>		
-		<script defer src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+		<title>Doppleruv efekt</title>				
 	</head>
 	<body>	
-		<div>
-            <button onclick="startAnimation()">Start Animation</button>
-            <button onclick="stopAnimation()">Stop Animation</button>
-        </div>
-
-        <script type="module">
-            import { createSignal, onCleanup, createRef } from "solid-js";
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+		<script type="module">          
             
-            let animationIsRunning = false;
             let x = 50;
             let y = 50;
-
-            const canvasRef = createRef();
-
             function setup() {
                 const canvas = createCanvas(400, 400);
                 canvas.parent(canvasRef.current);
@@ -59,25 +50,30 @@ import '../styles/styletitle.css'
 
                 // Draw the ellipse
                 ellipse(x, y, 50, 50);
-            }
+            }         
 
-            const [signal, setSignal] = createSignal(0);
-
-            function startAnimation() {
-                setSignal((prev) => prev + 1);
-                animationIsRunning = true;
-            }
-
-            function stopAnimation() {
-                setSignal((prev) => prev + 1);
-                animationIsRunning = false;
-            }
-
-            onCleanup(() => {
-                // Cleanup logic if needed
-            });
         </script>
-		  
+		<button onclick="startSound()">Play Sine Wave</button>
+		<button onclick="stopSound()">Stop</button>
+		<script>
+			let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+			let oscillator;
+		
+			function startSound() {
+			  oscillator = audioContext.createOscillator();
+			  oscillator.type = 'sine'; // You can change the waveform to 'square', 'sawtooth', or 'triangle'
+			  oscillator.frequency.setValueAtTime(440, audioContext.currentTime); // Set the initial frequency (440 Hz in this case)
+			  oscillator.connect(audioContext.destination);
+			  oscillator.start();
+			}
+		
+			function stopSound() {
+			  if (oscillator) {
+				oscillator.stop();
+				oscillator.disconnect();
+			  }
+			}
+		  </script>
 	
 	</body>
 </html>
