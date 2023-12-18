@@ -1,0 +1,61 @@
+---
+import { startSound, stopSound, restartSound } from '../components/audio.js'
+import '../styles/styletitle.css'
+import './animation.astro'
+import { onCleanup } from 'solid-js'
+import Animation from './animation.astro'
+import  P5 from 'p5';
+---
+
+<aside class="right-panel">
+  <div class="right-panel-content">
+    <aside class="right-panel">
+        <div class="right-panel-content">    
+          <h2>Animace:</h2>          
+              <script type="module">			
+                import { onCleanup } from "solid-js/dom";
+                let x = 50;
+                let y = 50;
+                
+                function setup() {
+                  console.log("Setup function executed");
+                  createCanvas(400, 400);
+                }
+                
+                function draw() {                  
+                  background(220);
+                  ellipse(x, y, 50, 50);
+                
+                  // Simple animation logic
+                  x += 2;
+                  y += 1;
+                  
+                  // Reset position when reaching the canvas boundary
+                  if (x > width) {
+                  x = 0;
+                  }
+                  
+                  if (y > height) {
+                  y = 0;
+                  }
+                  console.log("Draw function executed");
+                }
+                
+                onCleanup(() => {
+                  // Cleanup logic if needed
+                });
+                </script>
+                    <h2>Zvuk:</h2>
+                      
+                    <h2>Zvuk:</h2>   
+                      
+                  </div>
+                  <script>
+                      
+                  </script>  
+    </aside>    
+</aside>
+
+
+
+  

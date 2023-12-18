@@ -1,16 +1,84 @@
 ---
-
+import '../styles/styletitle.css'
 ---
 
+
+
 <html lang="en">
-	<head>
+	<head>				    	
+    	<meta charset="utf-8" />
 		<meta charset="utf-8" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
+		<title>Doppleruv efekt</title>		
+		<script defer src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
 	</head>
-	<body>
-		<h1>Astro</h1>
+	<body>	
+		<div>
+            <button onclick="startAnimation()">Start Animation</button>
+            <button onclick="stopAnimation()">Stop Animation</button>
+        </div>
+
+        <script type="module">
+            import { createSignal, onCleanup, createRef } from "solid-js";
+            
+            let animationIsRunning = false;
+            let x = 50;
+            let y = 50;
+
+            const canvasRef = createRef();
+
+            function setup() {
+                const canvas = createCanvas(400, 400);
+                canvas.parent(canvasRef.current);
+            }
+
+            function draw() {
+                background(220);
+
+                if (animationIsRunning) {
+                    // Simple animation logic
+                    x += 2;
+                    y += 1;
+
+                    // Reset position when reaching the canvas boundary
+                    if (x > width) {
+                        x = 0;
+                    }
+
+                    if (y > height) {
+                        y = 0;
+                    }
+                }
+
+                // Draw the border
+                stroke(0);
+                noFill();
+                rect(0, 0, width, height);
+
+                // Draw the ellipse
+                ellipse(x, y, 50, 50);
+            }
+
+            const [signal, setSignal] = createSignal(0);
+
+            function startAnimation() {
+                setSignal((prev) => prev + 1);
+                animationIsRunning = true;
+            }
+
+            function stopAnimation() {
+                setSignal((prev) => prev + 1);
+                animationIsRunning = false;
+            }
+
+            onCleanup(() => {
+                // Cleanup logic if needed
+            });
+        </script>
+		  
+	
 	</body>
 </html>
+

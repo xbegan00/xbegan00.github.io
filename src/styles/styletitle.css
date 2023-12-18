@@ -1,0 +1,51 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    height: 100vh;
+  }
+  
+  h1 {
+    color: #333;
+  }
+
+  main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .left-panel {
+    background-color: #ee4b4b;
+    padding: 100px;
+    min-width: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex; /* Use flex to align items vertically */
+    flex-direction: column; /* Stack items vertically */
+    align-items: flex-start; /* Align items to the start (left) */
+  }
+  .right-panel {
+    background-color: #8d8787;
+    padding: 100px;
+    min-width: 750px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex; /* Use flex to align items vertically */
+    flex-direction: column; /* Stack items vertically */
+    align-items: flex-start; /* Align items to the start (left) */
+  }
+  .left-panel
+  .right-panel h2 {
+    color: #333;
+    margin-bottom: 10px; /* Add margin to create space between the title and content */
+    align-items: flex-start;
+    justify-content: left;
+  }
+
+  /* Styling for buttons */
+  button {
+    margin-top: 10px;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+  }

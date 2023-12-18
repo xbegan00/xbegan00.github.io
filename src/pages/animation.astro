@@ -1,0 +1,97 @@
+---
+import { startSound, stopSound, restartSound } from '../components/audio.js'
+import { onCleanup } from 'solid-js'
+import  P5 from 'p5' // Import the P5.js library
+---
+
+<div>
+    <h2>Animation of doppler effect</h2>
+    <script lang="jsx">
+        let source, observer;
+        let speedSource = 2;
+        let frequency = 0.05;
+        let circleSize = 10;
+        let growthRate = 10;
+        let maxWaves = 30;
+        let waves = [];
+        let restartPosition = 400;
+      
+        function setup() {
+          globalThis.createCanvas(600, 400);
+          source = globalThis.createVector(100, globalThis.height / 2);
+          observer = globalThis.createVector(globalThis.width - 100, globalThis.height / 2 + 50);
+        }
+      
+        function draw() {
+          globalThis.background(255);
+      
+          // Draw circles emanating from the source
+          drawGrowingCircles(source.x, source.y);
+      
+          // Draw waves from the previous positions of the source
+          drawWaves();
+      
+          // Draw source and observer
+          globalThis.fill(0);
+          globalThis.ellipse(source.x, source.y, 20, 20);
+          globalThis.ellipse(observer.x, observer.y, 20, 20);
+      
+          // Update source position
+          source.x += speedSource;
+      
+          // Restart the animation if the source reaches the restart position
+          if (source.x >= restartPosition) {
+            source.x = 0;
+            waves = []; // Clear the waves array
+          }
+      
+          // Calculate Doppler shift
+          let distance = globalThis.dist(source.x, source.y, observer.x, observer.y);
+          let speedObserver = 0;
+          let dopplerShift = calculateDopplerShift(speedSource, speedObserver, distance);
+      
+          // Play the sound with Doppler shift
+          let adjustedFrequency = frequency + dopplerShift;
+          playSound(adjustedFrequency);
+        }
+      
+        function drawGrowingCircles(x, y) {
+          globalThis.noFill();
+          globalThis.stroke(0);
+          for (let i = 0; i < 5; i++) {
+            let size = circleSize + i * growthRate;
+            globalThis.ellipse(x, y, size, size);
+          }
+        }
+      
+        function drawWaves() {
+          globalThis.noFill();
+          globalThis.stroke(0);
+          for (let i = 0; i < waves.length; i++) {
+            let wave = waves[i];
+            globalThis.ellipse(wave.x, wave.y, wave.size, wave.size);
+            wave.size += growthRate;
+          }
+      
+          // Limit the number of waves
+          while (waves.length > maxWaves) {
+            waves.shift(); // Remove the oldest wave if exceeding the limit
+          }
+      
+          // Add a new wave
+          waves.push({ x: source.x, y: source.y, size: 1 });
+        }
+      
+        function calculateDopplerShift(speedSource, speedObserver, distance) {
+          let speedRelative = speedSource - speedObserver;
+          let dopplerShift = speedRelative / (speedRelative - distance);
+          return dopplerShift;
+        }
+      
+        function playSound(frequency) {
+          console.log("Frequency: " + frequency);
+        }
+      </script>
+      
+      
+</div>
