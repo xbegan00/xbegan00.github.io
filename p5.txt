@@ -1,0 +1,168 @@
+let source, observer;
+let speedSource = 2; // Lower speed
+let frequency = 440;
+let circleSize = 10;
+let growthRate = 10; // Doubled growth rate for twice as big waves
+let maxWaves = 30; // Maximum length of waves array
+let waves = [];
+let restartPosition = 400; // X-coordinate where the animation will restart
+
+let speedUpButton, speedDownButton, resetButton;
+let growthRateIncreaseButton, growthRateDecreaseButton;
+let maxWavesIncreaseButton, maxWavesDecreaseButton;
+let observerDefaultButton, observerLeftButton;
+
+function setup() {
+    createCanvas(800, 400);
+
+    // Create buttons
+    speedUpButton = createButton('Speed Up');
+    speedUpButton.position(20, height + 10);
+    speedUpButton.mousePressed(speedUp);
+
+    speedDownButton = createButton('Speed Down');
+    speedDownButton.position(100, height + 10);
+    speedDownButton.mousePressed(speedDown);
+
+    resetButton = createButton('Reset');
+    resetButton.position(200, height + 10);
+    resetButton.mousePressed(resetAnimation);
+
+    growthRateIncreaseButton = createButton('Increase Growth Rate');
+    growthRateIncreaseButton.position(620, height + 40);
+    growthRateIncreaseButton.mousePressed(increaseGrowthRate);
+
+    growthRateDecreaseButton = createButton('Decrease Growth Rate');
+    growthRateDecreaseButton.position(770, height + 40);
+    growthRateDecreaseButton.mousePressed(decreaseGrowthRate);
+
+    maxWavesIncreaseButton = createButton('Increase Max Waves');
+    maxWavesIncreaseButton.position(620, height + 10);
+    maxWavesIncreaseButton.mousePressed(increaseMaxWaves);
+
+    maxWavesDecreaseButton = createButton('Decrease Max Waves');
+    maxWavesDecreaseButton.position(770, height + 10);
+    maxWavesDecreaseButton.mousePressed(decreaseMaxWaves);
+
+    observerDefaultButton = createButton('Observer Default Position');
+    observerDefaultButton.position(20, height + 40);
+    observerDefaultButton.mousePressed(observerDefaultPosition);
+
+    observerLeftButton = createButton('Observer Left Position');
+    observerLeftButton.position(190, height + 40);
+    observerLeftButton.mousePressed(observerLeftPosition);
+
+    // Set up source and observer
+    source = createVector(100, height / 2);
+    observer = createVector(width - 100, height / 2 + 50); // Move the observer a little down
+}
+
+function draw() {
+    background(255);
+
+    // Draw circles emanating from the source
+    drawGrowingCircles(source.x, source.y);
+
+    // Draw waves from the previous positions of the source
+    drawWaves();
+
+    // Draw source and observer
+    fill(255, 0, 0); // Red color for the source
+    ellipse(source.x, source.y, 20, 20);
+
+    fill(0, 0, 255); // Dark blue color for the observer
+    ellipse(observer.x, observer.y, 20, 20);
+
+    // Update source position
+    source.x += speedSource;
+
+    // Restart the animation if the source reaches the restart position
+    if (source.x >= restartPosition) {
+        source.x = 0;
+        waves = []; // Clear the waves array
+    }
+
+    // Calculate Doppler shift
+    let distance = dist(source.x, source.y, observer.x, observer.y);
+    let speedObserver = 0;
+    let dopplerShift = calculateDopplerShift(speedSource, speedObserver, distance);
+
+    // Play the sound with Doppler shift
+    let adjustedFrequency = frequency + dopplerShift;
+    playSound(adjustedFrequency);
+}
+
+function drawGrowingCircles(x, y) {
+    noFill();
+    stroke(0);
+    for (let i = 0; i < 5; i++) {
+        let size = circleSize + i * growthRate;
+        ellipse(x, y, size, size);
+    }
+}
+
+function drawWaves() {
+    noFill();
+    stroke(0);
+    for (let i = 0; i < waves.length; i++) {
+        let wave = waves[i];
+        ellipse(wave.x, wave.y, wave.size, wave.size);
+        wave.size += growthRate;
+    }
+
+    // Limit the number of waves
+    while (waves.length > maxWaves) {
+        waves.shift(); // Remove the oldest wave if exceeding the limit
+    }
+
+    // Add a new wave
+    waves.push({ x: source.x, y: source.y, size: 1 });
+}
+
+function calculateDopplerShift(speedSource, speedObserver, distance) {
+    let speedRelative = speedSource - speedObserver;
+    let dopplerShift = speedRelative / (speedRelative - distance);
+    return dopplerShift;
+}
+
+function playSound(frequency) {
+    console.log("Frequency: " + frequency);
+}
+
+// Button functions
+function speedUp() {
+    speedSource += 1;
+}
+
+function speedDown() {
+    speedSource = max(0, speedSource - 1);
+}
+
+function resetAnimation() {
+    source.x = 0;
+    waves = [];
+}
+
+function increaseGrowthRate() {
+    growthRate += 1;
+}
+
+function decreaseGrowthRate() {
+    growthRate = max(1, growthRate - 1);
+}
+
+function increaseMaxWaves() {
+    maxWaves += 1;
+}
+
+function decreaseMaxWaves() {
+    maxWaves = max(1, maxWaves - 1);
+}
+
+function observerDefaultPosition() {
+    observer = createVector(width - 100, height / 2 + 50);
+}
+
+function observerLeftPosition() {
+    observer = createVector(width - 750, height / 2 + 50);
+}
