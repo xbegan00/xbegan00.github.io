@@ -1,6 +1,7 @@
 ---
 import '../styles.css';
 import { createSignal, onCleanup } from "solid-js";
+
 ---
 <html lang="en">
 <head>	
@@ -14,12 +15,239 @@ import { createSignal, onCleanup } from "solid-js";
 <body>	
 	<header>
     	Doppleruv efekt
-  	</header>		
+  	</header>	
+	
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/addons/p5.sound.js"></script>
+	<script>
+		let x = 50;
+		let y = 50;
+		let xSpeed = 5;
+		let ySpeed = 3;	  
+		let hitSound;
+		
+		// Ensure P5.js functions are available in the global scope
+		window.setup = function() {			
+		createCanvas(800, 400);
+		// Create buttons
+		let button1 = createButton('Set Speed 1');
+      	let button2 = createButton('Set Speed 2');
+
+		// Set button positions
+		button1.position(10, height + 10);
+		button2.position(120, height + 10);
+
+		// Set button events
+		button1.mousePressed(setSpeed1);
+		button2.mousePressed(setSpeed2);
+		
+	  };
+  
+	  window.draw = function() {
+		background(220);
+  
+		// Draw the bouncing ball
+		fill(0, 128, 255);
+		ellipse(x, y, 30, 30);
+  
+		// Update the ball's position
+		x += xSpeed;
+		y += ySpeed;
+  
+		// Bounce off the walls
+		if (x > width - 15 || x < 15) {
+		  xSpeed *= -1;
+		  playHitSound();
+		}
+  
+		if (y > height - 15 || y < 15) {
+		  ySpeed *= -1;
+		  playHitSound();
+		}
+	  };  
+	    
+	  // Function to change the speed of the ball
+	  function setSpeed1() {
+      xSpeed = 5;
+      ySpeed = 3;
+    }
+
+    function setSpeed2() {
+      xSpeed = 8;
+      ySpeed = 4;
+    }
+
+	// Function to play the hit sound
+    function playHitSound() {    
+		
+    }
+  
+	  // Run P5.js setup function when the document is ready
+	  document.addEventListener('DOMContentLoaded', () => {
+		setup();
+	  });
+  
+	  // Run P5.js draw function continuously
+	  window.requestAnimationFrame(draw);
+	</script>
+	<!-- Script section for handling button clicks -->
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+		document.getElementById('speedButton1').addEventListener('click', function() {
+			changeSpeed(5, 3);
+		});
+	
+		document.getElementById('speedButton2').addEventListener('click', function() {
+			changeSpeed(8, 4);
+		});
+	
+		// Add more event listeners for additional buttons as needed
+		});
+	</script>
+	
+	<script>
+		let xspacing = 16; // Distance between each horizontal location
+		let w; // Width of entire wave
+		let theta = 0.0; // Start angle at 0
+		let amplitude = 100.0; // Height of wave
+		let period = 500.0; // How many pixels before the wave repeats
+		let dx; // Value for incrementing x
+		let yvalues; // Using an array to store height values for the wave
+		
+		function setup() {
+		  createCanvas(800, 400);
+		  w = width + 16;
+		  dx = (TWO_PI / period) * xspacing;
+		  yvalues = new Array(floor(w / xspacing));
+		
+		  // Create buttons
+		  let normalButton = createButton("Normal");
+		  normalButton.position(10, height + 10);
+		  normalButton.mousePressed(setNormalPeriod);
+		
+		  let doubleButton = createButton("Double");
+		  doubleButton.position(80, height + 10);
+		  doubleButton.mousePressed(setDoublePeriod);
+		
+		  let halfButton = createButton("Half");
+		  halfButton.position(150, height + 10);
+		  halfButton.mousePressed(setHalfPeriod);
+		}
+		
+		function draw() {
+		  background(255); // Set background to white
+		  calcWave();
+		  renderWave();
+		}
+		
+		function calcWave() {
+		  // Increment theta (try different values for
+		  // 'angular velocity' here)
+		  theta += 0.02;
+		
+		  // For every x value, calculate a y value with the sine function
+		  let x = theta;
+		  for (let i = 0; i < yvalues.length; i++) {
+			yvalues[i] = sin(x) * amplitude;
+			x += dx;
+		  }
+		}
+		
+		function renderWave() {
+		  noStroke();
+		  fill(0, 0, 255); // Set fill to blue
+		  // Draw points representing the sine wave
+		  for (let x = 0; x < yvalues.length; x++) {
+			ellipse(x * xspacing, height / 2 + yvalues[x], 8, 8);
+		  }
+		}
+		
+		// Button functions
+		function setNormalPeriod() {
+		  period = 500.0;
+		  dx = (TWO_PI / period) * xspacing;
+		}
+		
+		function setDoublePeriod() {
+		  period = 1000.0;
+		  dx = (TWO_PI / period) * xspacing;
+		}
+		
+		function setHalfPeriod() {
+		  period = 250.0;
+		  dx = (TWO_PI / period) * xspacing;
+		}  
+	  </script>
 	<nav>
     <p>Sinus Wave SoundPlayer:</p>
-			<button onclick="playSineWave440hz()">Play sine wave 440 hz frequency</button>
-		<script src="../components/audiosin.js"></script>
-	
-  	</nav>	
+    
+	<button onclick="startSound()">Start Sound</button>
+    <button onclick="stopSound()">Stop Sound</button>
+    <button onclick="decreaseFrequency()">Decrease Frequency</button>
+    <button onclick="increaseFrequency()">Increase Frequency</button>
+
+    <audio id="sinusWavePlayer"></audio>
+
+    <script>
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const sinusWavePlayer = document.getElementById('sinusWavePlayer');
+      let oscillator;
+
+      function startSound() {
+        oscillator = audioContext.createOscillator();
+        oscillator.type = 'sine'; // Sinusoidal wave
+        oscillator.frequency.setValueAtTime(440, audioContext.currentTime); // Initial frequency
+        oscillator.connect(audioContext.destination);
+        oscillator.start();
+        sinusWavePlayer.src = URL.createObjectURL(new Blob([generateSinusWave()]));
+        document.addEventListener('keydown', unlockAudio, { once: true });
+      }
+
+      function unlockAudio() {
+        // This is a workaround to unlock audio on Chrome
+        sinusWavePlayer.play().then(() => {
+          sinusWavePlayer.pause();
+          sinusWavePlayer.currentTime = 0;
+        });
+      }
+
+      function stopSound() {
+        if (oscillator) {
+          oscillator.stop();
+          sinusWavePlayer.src = ''; // Clear the current source
+        }
+      }
+
+      function decreaseFrequency() {
+        if (oscillator) {
+          oscillator.frequency.value -= 10;
+          updateSinusWave();
+        }
+      }
+
+      function increaseFrequency() {
+        if (oscillator) {
+          oscillator.frequency.value += 10;
+          updateSinusWave();
+        }
+      }
+
+      function updateSinusWave() {
+        sinusWavePlayer.src = URL.createObjectURL(new Blob([generateSinusWave()]));
+      }
+
+      function generateSinusWave() {
+        const sampleRate = 44100;
+        const duration = 1; // seconds
+        const samples = new Float32Array(sampleRate * duration);
+
+        for (let i = 0; i < samples.length; i++) {
+          samples[i] = Math.sin(2 * Math.PI * oscillator.frequency.value * i / sampleRate);
+        }
+
+        return new Float32Array(samples.buffer);
+      }
+    </script>
+  </nav>	
 </body>
 </html>

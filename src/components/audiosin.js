@@ -27,10 +27,7 @@ function playSound({ array, sampleRate }) {
   const source = audioContext.createBufferSource();
   source.connect(audioContext.destination);
   source.buffer = audioBuffer;
-  source.start();
-  console.log('ugh?');
-  console.log('playing');
-  console.log(array);
+  source.start();  
 }
 
 function playSineWave440hz() {
