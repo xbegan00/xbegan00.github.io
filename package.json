@@ -1,0 +1,20 @@
+{
+  "name": "dark-debris",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.3.3",
+    "astro": "^4.0.6",
+    "p5": "^1.9.0",
+    "solid-js": "^1.8.7",
+    "typescript": "^5.3.3",
+    "yarn": "^1.22.21"
+  }
+}
